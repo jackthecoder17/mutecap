@@ -17,13 +17,19 @@ export function TranscriptEditor({ captions, activeId, onSeek, onEdit }: Props) 
   const listRef = React.useRef<HTMLOListElement>(null)
 
   // Keep the caption being spoken in view while the video plays, without stealing focus from an input.
+  // Scrolls only the list itself; scrollIntoView would also scroll the page and move the video out of view.
   React.useEffect(() => {
-    if (!activeId || listRef.current?.contains(document.activeElement)) return
-    listRef.current?.querySelector(`[data-id="${activeId}"]`)?.scrollIntoView({ block: "nearest" })
+    const list = listRef.current
+    if (!activeId || !list || list.contains(document.activeElement)) return
+    const row = list.querySelector<HTMLElement>(`[data-id="${activeId}"]`)
+    if (!row) return
+    const above = row.offsetTop < list.scrollTop
+    const below = row.offsetTop + row.offsetHeight > list.scrollTop + list.clientHeight
+    if (above || below) list.scrollTo({ top: row.offsetTop - list.clientHeight / 3, behavior: "smooth" })
   }, [activeId])
 
   return (
-    <ol ref={listRef} className="flex max-h-[42svh] flex-col gap-1 overflow-y-auto pr-1">
+    <ol ref={listRef} className="relative flex max-h-[42svh] flex-col gap-1 overflow-y-auto pr-1">
       {captions.map((c) => (
         <li
           key={`${c.id}-${c.words.length}`}
