@@ -4,6 +4,8 @@
 
 Drop in a video and get word-by-word captions burned in, ready to post on LinkedIn, Instagram or TikTok. The speech recognition and the video encoding both run in your browser, so your video is never uploaded. Free, no sign-up, no watermark.
 
+**▶ Try it:** https://mutecap.vercel.app
+
 Built with **Next.js**, **shadcn/ui**, **[Transformers.js](https://github.com/huggingface/transformers.js)** (Whisper) and **[Mediabunny](https://mediabunny.dev)**.
 
 ---
@@ -84,6 +86,10 @@ Open http://localhost:3000 and try one of the sample videos. The first run downl
 - Best for clips up to a few minutes, since the whole video is processed in memory.
 - Whisper base is fast but not perfect, especially with names, heavy accents or background music, so check the transcript before exporting.
 - Export needs a browser with WebCodecs H.264 encoding: recent Chrome, Edge or Safari.
+
+## Deploy
+
+Hosted on Vercel with the GitHub repo connected, so every push to `main` deploys to production. To run your own copy, import the repo at [vercel.com/new](https://vercel.com/new); no environment variables are needed. If you host it elsewhere, keep the two headers from `next.config.ts`.
 
 ## License
 
