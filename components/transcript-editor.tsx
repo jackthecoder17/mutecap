@@ -32,7 +32,9 @@ export function TranscriptEditor({ captions, activeId, onSeek, onEdit }: Props) 
     <ol ref={listRef} className="relative flex max-h-[42svh] flex-col gap-1 overflow-y-auto pr-1">
       {captions.map((c) => (
         <li
-          key={`${c.id}-${c.words.length}`}
+          // The inputs are uncontrolled, so key by content too: when an edit regroups later captions,
+          // each row remounts with its new text instead of showing a stale value.
+          key={`${c.id}:${c.words.map((w) => w.text).join(" ")}`}
           data-id={c.id}
           className={cn("flex items-center gap-2 rounded-lg px-2 py-1 transition-colors", c.id === activeId && "bg-primary/10")}
         >

@@ -54,9 +54,21 @@ async function create(device: Device): Promise<Asr> {
         task: "transcribe",
         ...(language ? { language } : {}),
       })) as { chunks?: Chunk[] }
-      return (out.chunks ?? [])
-        .map((c) => ({ text: c.text.trim(), start: c.timestamp[0], end: c.timestamp[1] ?? c.timestamp[0] + 0.3 }))
-        .filter((w) => w.text.length > 0)
+      const words: Word[] = []
+      for (const c of out.chunks ?? []) {
+        const text = c.text.trim()
+        if (!text) continue
+        const end = c.timestamp[1] ?? c.timestamp[0] + 0.3
+        const prev = words[words.length - 1]
+        // Whisper sometimes splits a word into pieces ("open" + "-source", "it" + "'s"); join them back.
+        if (prev && /^[-'’]|^[.,!?;:]+$/.test(text)) {
+          prev.text += text
+          prev.end = end
+        } else {
+          words.push({ text, start: c.timestamp[0], end })
+        }
+      }
+      return words
     },
   }
 }
